@@ -27,9 +27,12 @@ app.set('views', path.join(__dirname, '/views')); // Define la ubicación de la 
 // ************ Route System require and use() ************
 const mainRouter = require('./routes/main.routes'); // Rutas main
 const productsRouter = require('./routes/products.routes'); // Rutas /products
+const logMiddleware = require('./middlewares/logMiddleware');
 
 app.use('/', mainRouter);
 app.use('/products', productsRouter);
+app.use(logMiddleware);
+
 
 
 
@@ -48,6 +51,14 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
+
+// app.use((req, res, next)=>{
+//   res.status(404).render('page404');
+//   next();
+// });
+
+
+
 
 // ************ exports app - dont'touch ************
 module.exports = app;
