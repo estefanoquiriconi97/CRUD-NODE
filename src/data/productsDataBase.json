@@ -124,14 +124,5 @@
   "discount": 12,
   "image": "img-bicicleta-fierce.jpg",
   "category": "visited"
- },
- {
-  "id": "1a48c192-a829-4fae-bca6-df63d4bc8424",
-  "name": "Proyecto-DH",
-  "price": "30000",
-  "discount": "25",
-  "category": "in-sale",
-  "description": "123",
-  "image": "1701889882919_img.png"
  }
 ]
