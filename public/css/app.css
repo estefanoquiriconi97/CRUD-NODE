@@ -13,6 +13,15 @@
   --base-font-family: 'Roboto', sans-serif
 }
 
+.text-danger {
+  color: var(--gray);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.is-invalid{
+  background-color: red !important;
+}
 
 /*====== Basics ======*/
 * {

@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
+const {validationResult} = require('express-validator');
 
 const productsFilePath = path.join(__dirname, "../data/productsDataBase.json");
 let products = JSON.parse(fs.readFileSync(productsFilePath, "utf-8"));
@@ -32,6 +33,15 @@ const controller = {
 
   // Create -  Method to store
   store: (req, res) => {
+    const validation = validationResult(req);
+
+    console.log(validation.mapped());
+
+    if(validation.errors.length > 0) {
+      res.render('product-create-form', { errors : validation.mapped(),
+      oldData : req.body });
+    }
+
     const newProduct = {
       // id: Date.now()
       id: uuidv4(),
