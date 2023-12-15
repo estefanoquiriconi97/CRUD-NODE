@@ -27,8 +27,6 @@ const usersController = {
           users[i].email == req.body.email &&
           users[i].password == req.body.password
         ) {
-          console.log(users[i].email);
-
           usuarioALoguearse = users[i];
           break;
         }
@@ -42,7 +40,13 @@ const usersController = {
 
       req.session.usuarioLogueado = usuarioALoguearse;
 
-      res.render('success', {req});
+      if (req.body.recordame != undefined) {
+        res.cookie("recordame", usuarioALoguearse.email, {
+          maxAge: 60000,
+        });
+      }
+
+      res.render("success", { req });
     } else {
       return res.render("login", { errors: errors.errors });
     }
