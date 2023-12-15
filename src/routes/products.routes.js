@@ -1,9 +1,9 @@
 // ************ Require's ************
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
 const path = require("path");
 const { body } = require("express-validator");
+const upload = require('../middlewares/productMulter');
 
 const validations = [
   body("name").notEmpty().withMessage("Tienes que escribir un nombre"),
@@ -34,17 +34,7 @@ const validations = [
   }),
 ];
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.resolve(__dirname, "../../public/images/products"));
-  },
-  filename: (req, file, cb) => {
-    let fileName = `${Date.now()}_img${path.extname(file.originalname)}`;
-    cb(null, fileName);
-  },
-});
 
-const upload = multer({ storage });
 
 // ************ Controller Require ************
 const productsController = require("../controllers/productsController");

@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
-const {validationResult} = require('express-validator');
+const { validationResult } = require("express-validator");
 
 const productsFilePath = path.join(__dirname, "../data/productsDataBase.json");
 let products = JSON.parse(fs.readFileSync(productsFilePath, "utf-8"));
@@ -22,8 +22,9 @@ const controller = {
     });
     if (product) {
       res.render("detail", { product });
+    } else {
+      res.send("No existe el producto que estás buscando!!");
     }
-    res.send("No existe el producto que buscas");
   },
 
   // Create - Form to create
@@ -37,23 +38,25 @@ const controller = {
 
     console.log(validation.mapped());
 
-    if(validation.errors.length > 0) {
-      res.render('product-create-form', { errors : validation.mapped(),
-      oldData : req.body });
+    if (validation.errors.length > 0) {
+      res.render("product-create-form", {
+        errors: validation.mapped(),
+        oldData: req.body,
+      });
+    } else {
+      const newProduct = {
+        // id: Date.now()
+        id: uuidv4(),
+        ...req.body,
+        image: req.file?.filename || "default-image.png",
+      };
+      products.push(newProduct);
+
+      let productsJSON = JSON.stringify(products, null, " ");
+      fs.writeFileSync(productsFilePath, productsJSON);
+
+      res.redirect("/products");
     }
-
-    const newProduct = {
-      // id: Date.now()
-      id: uuidv4(),
-      ...req.body,
-      image: req.file?.filename || 'default-image.png',
-    };
-    products.push(newProduct);
-
-    let productsJSON = JSON.stringify(products, null, " ");
-    fs.writeFileSync(productsFilePath, productsJSON);
-
-    res.redirect("/products");
   },
 
   // Update - Form to edit
@@ -62,8 +65,9 @@ const controller = {
     let product = products.find((product) => product.id == id);
     if (product) {
       res.render("product-edit-form", { product });
+    } else {
+      res.send("No existe el producto que estás buscando!!");
     }
-    res.send("No existe el producto que estás buscando!!");
   },
   // Update - Method to update
   update: (req, res) => {
@@ -80,23 +84,29 @@ const controller = {
       fs.writeFileSync(productsFilePath, JSON.stringify(products, null, " "));
       res.redirect("/products");
     }
-    
   },
 
   // Delete - Delete one product from DB
   destroy: (req, res) => {
     //Eliminar la imagen si es que no es una por defecto
     let id = req.params.id;
-    let productDelete = products.find(product => product.id == id);
-    if(productDelete.image != 'default-image.png'){
-      fs.unlinkSync(path.join(__dirname, '../../public/images/products/', productDelete.image));
+    let productDelete = products.find((product) => product.id == id);
+    if (productDelete.image != "default-image.png") {
+      fs.unlinkSync(
+        path.join(
+          __dirname,
+          "../../public/images/products/",
+          productDelete.image
+        )
+      );
     }
     products = products.filter((product) => product.id != id);
     if (products) {
       fs.writeFileSync(productsFilePath, JSON.stringify(products, null, " "));
       res.redirect("/products");
+    } else {
+      res.send("No existe el producto que quieres eliminar!!");
     }
-    res.send("No existe el producto que quieres eliminar!!")
   },
 };
 
